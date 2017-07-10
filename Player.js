@@ -49,12 +49,30 @@ Player.prototype.mover = function (dt) {
   this.y = this.y + this.vy*dt;
   this.vx = this.vx + this.ax*dt;
   this.x = this.x + this.vx*dt;
+  this.vAngle = this.vAngle + this.aAngle * dt;
+  this.angle = this.angle + this.vAngle * dt;
   if(this.cooldown>0) {
     this.cooldown -= dt;
   } else {
     this.cooldown = 0;
   }
 };
+
+Player.prototype.moverAng = function (dt) {
+  this.angle = this.angle + this.vang*dt;
+  this.ax = this.am*Math.cos(Math.PI*this.angle/180);
+  this.ay = this.am*Math.sin(Math.PI*this.angle/180);
+  this.vx = this.vx + this.ax*dt;
+  this.vy = this.vy + (this.ay+this.g)*dt;
+  this.x = this.x + this.vx*dt;
+  this.y = this.y + this.vy*dt;
+  if(this.cooldown>0) {
+    this.cooldown -= dt;
+  } else {
+    this.cooldown = 0;
+  }
+};
+
 
 Player.prototype.colidiuCenario = function (ctx) {
   if(this.x >= 1080){

@@ -10,6 +10,8 @@ function Sprite(){
   this.width = 0;
   this.height = 0;
   this.angle = 0;
+  this.aAngle = 0;
+  this.vAngle = 0;
   this.vang = 0;
   this.color = "black";
   this.cooldown = 0;

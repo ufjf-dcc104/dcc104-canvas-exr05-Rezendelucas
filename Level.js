@@ -5,66 +5,28 @@ function Level (){
   this.lifeP2 = 3;
   this.music = true;
   this.end = false;
-  this.cenarios = [];
+  this.colObstaculos = 5;
+  this.obstaculos = [];
 }
 
 Level.prototype.init = function () {
-  var parede1 = new Sprite();
-  parede1.x = 330;
-  parede1.y = 300;
-  parede1.height = 355;
-  parede1.width = 40;
-  
-  this.cenarios.push(parede1);
-
-  var parede2 = new Sprite();
-  parede2.x = 150;
-  parede2.y = 148;
-  parede2.height = 50;
-  parede2.width = 200;
-
-  this.cenarios.push(parede2);
-
-  var parede3 = new Sprite();
-  parede3.x = 150;
-  parede3.y = 300;
-  parede3.height = 50;
-  parede3.width = 100;
-
-  this.cenarios.push(parede3);
-
-  var parede4 = new Sprite();
-  parede4.x = 900;
-  parede4.y = 260;
-  parede4.height = 300;
-  parede4.width = 30;
-
-  this.cenarios.push(parede4);
-
-  var parede5 = new Sprite();
-  parede5.x = 600;
-  parede5.y = 80;
-  parede5.height = 50;
-  parede5.width = 300;
-
-  this.cenarios.push(parede5);
-
-  var parede6 = new Sprite();
-  parede6.x = 1050;
-  parede6.y = 420;
-  parede6.height = 60;
-  parede6.width = 55;
-
-  this.cenarios.push(parede6);
-
-  var parede7 = new Sprite();
-  parede7.x = 650;
-  parede7.y = 300;
-  parede7.height = 200;
-  parede7.width = 75;
-
-  this.cenarios.push(parede7);
-
+  var incrementoX = 1;
+  var incrementoY = 1;
+  var xInit = 60;
+  var yInit = 60;
+  for(var i = 1 ; i <= this.colObstaculos ; i++){
+      for(var j = 1 ; j <= 5 ; j++){    
+          var obstaculo = new Sprite();
+          obstaculo.x = xInit * incrementoX;
+          obstaculo.y = yInit * incrementoY;
+          obstaculo.height = 50;
+          obstaculo.width = 50;
+          incrementoY = incrementoY + 2;
+          this.obstaculos.push(obstaculo);   
+      }
+    incrementoX = incrementoX + 2;
+    incrementoY = 1;
+  }
 };
 
 Level.prototype.mover = function (dt) {
@@ -84,8 +46,8 @@ Level.prototype.mover = function (dt) {
 };
 
 Level.prototype.desenhar = function (ctx) {
-    for (var i = 0; i < this.cenarios.length; i++) {
-      this.cenarios[i].desenhar(ctx);
+    for (var i = 0; i < this.obstaculos.length; i++) {
+      this.obstaculos[i].desenhar(ctx);
     }
 };
 
@@ -152,16 +114,16 @@ Level.prototype.colidiuComTiros = function (alvo1, alvo2, al, key, resolveColisa
     for (var i = 0; i < this.shots.length; i++) {
       if(this.shots[i].colidiuCom(alvo1)){
         resolveColisao(this.shots[i], alvo1);
-        alvo1.x = 40;
-        alvo1.y = 450;
+        alvo1.x = 50;
+        alvo1.y = 490;
         if(al && key){
           al.play(key);
         }
       }
       if(this.shots[i].colidiuCom(alvo2)){
         resolveColisao(this.shots[i], alvo2);
-        alvo2.x = 500;
-        alvo2.y = 450;
+        alvo2.x = 550;
+        alvo2.y = 110;
         if(al && key){
           al.play(key);
         }
@@ -170,19 +132,19 @@ Level.prototype.colidiuComTiros = function (alvo1, alvo2, al, key, resolveColisa
 };
 
 Level.prototype.colidiuCenario = function (alvo1, alvo2, al, key, resolveColisao) {
-    for (var i = 0; i < this.cenarios.length; i++) {
-      if(this.cenarios[i].colidiuCom(alvo1)){
-        resolveColisao(this.cenarios[i], alvo1);
-        alvo1.x = 40;
-        alvo1.y = 450;
+    for (var i = 0; i < this.obstaculos.length; i++) {
+      if(this.obstaculos[i].colidiuCom(alvo1)){
+        resolveColisao(this.obstaculos[i], alvo1);
+        alvo1.x = 50;
+        alvo1.y = 490;
         if(al && key){
           al.play(key);
         }
       }
-      if(this.cenarios[i].colidiuCom(alvo2)){
-        resolveColisao(this.cenarios[i], alvo2);
-        alvo2.x = 500;
-        alvo2.y = 450;
+      if(this.obstaculos[i].colidiuCom(alvo2)){
+        resolveColisao(this.obstaculos[i], alvo2);
+        alvo2.x = 550;
+        alvo2.y = 110;
         if(al && key){
           al.play(key);
         }
