@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DCC104 - CANVAS 05</title>
+    <script src="AudioLoader.js" charset="utf-8"></script>
+    <script src="ImageLoader.js" charset="utf-8"></script>
+    <script src="Inimigo.js" charset="utf-8"></script>
+    <script src="Level.js" charset="utf-8"></script>
+    <script src="Player.js" charset="utf-8"></script>
+    <script src="Sprite.js" charset="utf-8"></script>
+  </head>
+  <body>
+
+  
+  <canvas></canvas>
+  <script>
+
+    var eCanvas = document.getElementsByTagName("canvas")[0];
+    eCanvas.width = 600;
+    eCanvas.height = 600;
+    var ctx = eCanvas.getContext("2d");
+
+    var imgLoad = new ImageLoader();
+    imgLoad.load("player1", "imagens/player1.png");
+    imgLoad.load("player2", "imagens/player2.png")
+    imgLoad.load("enemy1", "imagens/enemy1.png");
+    imgLoad.load("enemy2", "imagens/enemy2.png");
+    imgLoad.load("enemy3", "imagens/enemy3.png");
+    imgLoad.load("enemy4", "imagens/enemy4.png");
+    imgLoad.load("shot", "imagens/shot.png");
+    imgLoad.load("explosion", "imagens/explosion.png");
+    imgLoad.load("galaxy", "imagens/galaxy.png");
+
+    var audLoad = new AudioLoader();
+    audLoad.load("shot", "audios/Missle_Launch-Kibblesbob-2118796725.mp3");
+    audLoad.load("boom", "audios/Grenade-SoundBible.com-1777900486.mp3");
+    audLoad.load("background", "audios/Demonstar.mp3");
+    audLoad.load("gameover", "audios/RE4 - Game Over.mp3");
+    audLoad.load("victory", "audios/Final Fantasy IX Fanfare Ringtone.mp3");
+
+    var fps = 120;
+    var atual = new Date();
+    var anterior = new Date();
+    var dt = 1/fps;
+
+    var player1 = new Player();
+    player1.x = 40;
+    player1.y = 450;
+
+    var player2 = new Player();
+    player2.x = 500;
+    player2.y = 450;
+
+    var level = new Level();
+
+    level.init();
+
+    desenha();
+
+    function desenha(){
+  	  
+      requestAnimationFrame(desenha);
+      atual = new Date();
+      dt = (atual - anterior)/1000;
+      ctx.clearRect(0,0,eCanvas.width, eCanvas.height);
+      ctx.strokeRect(0,0,eCanvas.width, eCanvas.height);
+
+
+      ctx.fillStyle = "darkgreen";
+      ctx.font='20px Arial';
+      ctx.fillText("Player 1: " + level.lifeP1, 10, 20);
+      ctx.fillText("Player 2: " + level.lifeP2, 500, 20)
+
+      //////////////////colisoes////////////////////////////
+
+      //level.colidiuComParede(player1, player2, audLoad,"boom", function(cenario, alvo){});
+
+      level.colidiuCenario(player1, player2, audLoad,"boom", function(cenario, alvo){});
+
+      level.colidiuComTiros(player1, player2, audLoad,"boom", function(cenario, alvo){});
+
+      level.colidiuPlayers(player1, player2, audLoad,"boom", function(cenario, alvo){
+        player1.x = 40;
+        player1.y = 450;
+        level.lifeP1--;
+        player2.x = 500;
+        player2.y = 450;
+        level.lifeP2--;
+      });
+
+      ////////////////////////movimentaçao////////////////////////
+
+      level.mover(dt);
+      player1.mover(dt);
+      player2.mover(dt);
+
+      ////////////////////////Render///////////////////////////////
+
+      level.desenhar(ctx);
+      level.desenharImg(ctx, imgLoad);
+      //player1.desenhar(ctx);
+      player1.desenharImg(ctx, imgLoad.images["player1"]);
+      //player2.desenhar(ctx);
+      player2.desenharImg(ctx, imgLoad.images["player2"]);
+
+       anterior = atual;
+    }
+
+
+
+    addEventListener("keydown", function(e){
+        switch (e.keyCode) {
+          case 13:
+            if(level.playerLife(ctx))
+              level.fire(player2, audLoad, "shot", 0.5);
+            break;
+          case 32:
+            if(level.playerLife(ctx))
+              level.fire(player1, audLoad, "shot", 0.5);
+            break;
+          case 37:
+            player1.vx = -100;
+            player1.vy = 0;
+            break;
+          case 38:
+            player1.vx = 0;
+            player1.vy = -100;
+            break;
+          case 39:
+            player1.vx = +100;
+            player1.vy = 0;
+            break;
+          case 40:
+            player1.vx = 0;
+            player1.vy = 100;
+            break;
+          case 65:
+            player2.vx = -100;
+            player2.vy = 0;
+            break;
+          case 68:
+            player2.vx = 100;
+            player2.vy = 0;
+            break;
+          case 83:
+            player2.vx = 0;
+            player2.vy = 100;
+            break;
+          case 87:
+            player2.vx = 0;
+            player2.vy = -100;
+            break;
+          default:
+
+        }
+      });
+      addEventListener("keyup", function(e){
+        switch (e.keyCode) {
+          case 37:
+            player1.vx = 0;
+            break;
+          case 38:
+            player1.vy = 0;
+            break;
+          case 39:
+          	player1.vx = 0;
+            break;
+          case 40:
+            player1.vy = 0;
+            break;
+          case 65:
+            player2.vx = 0;
+            break;
+          case 68:
+            player2.vx = 0;
+            break;
+          case 83:
+            player2.vy = 0;
+            break;
+          case 87:
+            player2.vy = 0;
+            break;
+          default:
+
+        }
+      });
+
+  </script>
+  </body>
+
+</html>
