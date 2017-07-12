@@ -21,6 +21,7 @@ Level.prototype.init = function () {
           obstaculo.y = yInit * incrementoY;
           obstaculo.height = 80;
           obstaculo.width = 80;
+          obstaculo.imgkey = "meteor";
           incrementoY = incrementoY + 2;
           this.obstaculos.push(obstaculo);   
       }
@@ -32,7 +33,7 @@ Level.prototype.init = function () {
 Level.prototype.mover = function (dt) {
 
     for (var i = this.shots.length-1;i>=0; i--) {
-      this.shots[i].mover(dt);
+      this.shots[i].moverAng(dt);
       if(
         this.shots[i].x >  3000 ||
         this.shots[i].x < -3000 ||
@@ -45,28 +46,26 @@ Level.prototype.mover = function (dt) {
 
 };
 
-Level.prototype.desenhar = function (ctx) {
+Level.prototype.desenharLevel = function (ctx, imageLib) {
     for (var i = 0; i < this.obstaculos.length; i++) {
-      this.obstaculos[i].desenhar(ctx);
+      this.obstaculos[i].desenharMeteoro(ctx, imageLib.images[this.obstaculos[i].imgkey]);
     }
-};
-
-Level.prototype.desenharImg = function (ctx, imageLib) {
-  for (var i = 0; i < this.shots.length; i++) {
-    this.shots[i].desenharImg(ctx, imageLib.images[this.shots[i].imgkey]);
+    for (var i = 0; i < this.shots.length; i++) {
+    this.shots[i].desenharShot(ctx, imageLib.images[this.shots[i].imgkey]);
   }
 };
 
-Level.prototype.fire = function (alvo, audiolib, key, vol){
+Level.prototype.fire = function (alvo, tag ,audiolib, key, vol){
   if(alvo.cooldown>0) return;
   var tiro = new Sprite;
   tiro.x = alvo.x;
-  tiro.y = alvo.y - 40;
+  tiro.y = alvo.y;
   tiro.angle = alvo.angle;
-  tiro.am = 1000;
-  tiro.width = 10;
-  tiro.height = 10;
+  tiro.am = -1000;
+  tiro.width = 8;
+  tiro.height = 16;
   tiro.imgkey = "shot";
+  tiro.tag = tag;
   this.shots.push(tiro);
   alvo.cooldown = 0.8;
   if(audiolib && key) audiolib.play(key,vol);
@@ -101,21 +100,25 @@ Level.prototype.colidiuComParede =  function (alvo1, alvo2, al, key, resolveColi
 
 Level.prototype.colidiuComTiros = function (alvo1, alvo2, al, key, resolveColisao) {
     for (var i = 0; i < this.shots.length; i++) {
-      if(this.shots[i].colidiuCom(alvo1)){
+      if(this.shots[i].colidiuCom(alvo1) && this.shots[i].tag == 2){
         resolveColisao(this.shots[i], alvo1);
         alvo1.x = 30;
         alvo1.y = 490;
+        this.lifeP1--;
         if(al && key){
           al.play(key);
         }
+        this.shots.splice(i, 1);
       }
-      if(this.shots[i].colidiuCom(alvo2)){
+      else if(this.shots[i].colidiuCom(alvo2) && this.shots[i].tag == 1){
         resolveColisao(this.shots[i], alvo2);
         alvo2.x = 570;
         alvo2.y = 110;
+        this.lifeP2--;
         if(al && key){
           al.play(key);
         }
+        this.shots.splice(i, 1);
       }     
     } 
 };
@@ -126,6 +129,7 @@ Level.prototype.colidiuCenario = function (alvo1, alvo2, al, key, resolveColisao
         resolveColisao(this.obstaculos[i], alvo1);
         alvo1.x = 30;
         alvo1.y = 490;
+        this.lifeP1--;
         if(al && key){
           al.play(key);
         }
@@ -134,6 +138,7 @@ Level.prototype.colidiuCenario = function (alvo1, alvo2, al, key, resolveColisao
         resolveColisao(this.obstaculos[i], alvo2);
         alvo2.x = 570;
         alvo2.y = 110;
+        this.lifeP2--;
         if(al && key){
           al.play(key);
         }
@@ -150,35 +155,25 @@ Level.prototype.colidiuPlayers = function (alvo1, alvo2, al, key, resolveColisao
       }   
 };
 
-Level.prototype.playerLife = function(ctx, al = null, key = null){
+Level.prototype.colidiuTirosMeteoros = function () {
+       for (var i = 0; i < this.obstaculos.length; i++) {
+         for (var j = 0; j < this.shots.length; j++) {
+             if(this.shots[j].colidiuCom(this.obstaculos[i])){
+                this.shots.splice(j, 1);
+             }
+         }
+       }
+};
+
+Level.prototype.vitoria = function(ctx, al = null, key = null){
   if (this.lifeP1 > 0 && this.lifeP2 > 0) {
     return true;
   } else if( this.lifeP1 <= 0) {
     this.message = "Player2 Venceu!";
-    ctx.fillText(this.message, 180, 240);
-    if(this.music&&al&&key) { 
-      al.play(key)
-      this.music = false;
-    }
     return false;
   } else {
     this.message = "Player1 Venceu!";
-    ctx.fillText(this.message, 180, 240);
-    if(this.music&&al&&key) { 
-      al.play(key)
-      this.music = false;
-    }
     return false;
   }
 };
-
-Level.prototype.victory = function(ctx, al = null, key = null){
-    this.inimigos = [];
-    this.message = "Você venceu!";
-    ctx.fillText(this.message, 180, 240);
-    if(this.music&&al&&key) { 
-      al.play(key)
-      this.music = false;
-    }
-}
 

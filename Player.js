@@ -7,7 +7,7 @@ function Player(){
   this.ay = 0;
   this.width = 32;
   this.height = 32;
-  this.angle = 270;
+  this.angle = 90;
   this.vang = 0;
   this.am = 0;
   this.color = "blue";
@@ -48,8 +48,8 @@ Player.prototype.mover = function (dt) {
     this.y = this.y + this.vy*dt;
   }
   this.angle = this.angle + this.vang*dt;
-  this.ax = this.am*Math.cos(Math.PI*this.angle/180);
-  this.ay = this.am*Math.sin(Math.PI*this.angle/180);
+  this.vx = this.am*Math.cos(Math.PI*this.angle/180);
+  this.vy = this.am*Math.sin(Math.PI*this.angle/180);
   this.vy = this.vy + this.ay*dt;
   this.vx = this.vx + this.ax*dt;
   this.x = this.x + this.vx*dt;

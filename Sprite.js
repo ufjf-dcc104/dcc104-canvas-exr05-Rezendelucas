@@ -7,12 +7,15 @@ function Sprite(){
   this.ax = 0;
   this.ay = 0;
   this.am = 0;
-  this.width = 0;
-  this.height = 0;
+  this.width = 80;
+  this.height = 80;
   this.angle = 0;
   this.vang = 0;
   this.color = "black";
   this.cooldown = 0;
+  this.imgkey;
+  this.tag;
+  this.debug = true;
 }
 
 Sprite.prototype.desenhar = function (ctx) {
@@ -28,7 +31,21 @@ Sprite.prototype.desenhar = function (ctx) {
   ctx.restore();
 };
 
-Sprite.prototype.desenharImg = function (ctx, img) {
+Sprite.prototype.desenharMeteoro = function (ctx, img) {
+  ctx.save();
+  ctx.translate(this.x, this.y);
+  ctx.rotate(this.angle*2*Math.PI/360);
+  ctx.rotate(Math.PI/2);
+  ctx.fillStyle = this.color;
+  ctx.drawImage(img, -this.width/2 - 5, -this.height/2 - 5, this.width+20, this.height +20);
+  if(this.debug){
+    ctx.strokeStyle = "grey";
+    ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
+  }
+  ctx.restore();
+};
+
+Sprite.prototype.desenharShot = function (ctx, img) {
   ctx.save();
   ctx.translate(this.x, this.y);
   ctx.rotate(this.angle*2*Math.PI/360);
@@ -39,6 +56,15 @@ Sprite.prototype.desenharImg = function (ctx, img) {
     ctx.strokeStyle = "grey";
     ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
   }
+  ctx.restore();
+};
+
+Sprite.prototype.desenharBackground = function (ctx, img) {
+  ctx.save();
+  ctx.translate(this.x, this.y);
+  ctx.rotate(this.angle*2*Math.PI/360);
+  ctx.fillStyle = this.color;
+  ctx.drawImage(img, this.x , this.y , this.width, this.height);
   ctx.restore();
 };
 
@@ -59,7 +85,6 @@ Sprite.prototype.mover = function (dt) {
   this.vy = this.vy + (this.ay+this.g)*dt;
   this.x = this.x + this.vx*dt;
   this.y = this.y + this.vy*dt;
-  this.angle = this.angle + this.vang*dt;
   if(this.cooldown>0) {
     this.cooldown -= dt;
   } else {
