@@ -45,11 +45,11 @@
     var dt = 1/fps;
 
     var player1 = new Player();
-    player1.x = 50;
+    player1.x = 30;
     player1.y = 490;
 
     var player2 = new Player();
-    player2.x = 550;
+    player2.x = 570;
     player2.y = 110;
 
     var level = new Level();
@@ -81,10 +81,10 @@
       level.colidiuComTiros(player1, player2, audLoad,"boom", function(cenario, alvo){});
 
       level.colidiuPlayers(player1, player2, audLoad,"boom", function(cenario, alvo){
-        player1.x = 50;
+        player1.x = 30;
         player1.y = 490;
         level.lifeP1--;
-        player2.x = 550;
+        player2.x = 570;
         player2.y = 110;
         level.lifeP2--;
       });
@@ -92,8 +92,9 @@
       ////////////////////////movimentaçao////////////////////////
 
       level.mover(dt);
-      player1.moverAng(dt);
+      player1.mover(dt);   
       player2.mover(dt);
+    
 
       ////////////////////////Render///////////////////////////////
 
@@ -120,18 +121,16 @@
               level.fire(player1, audLoad, "shot", 0.5);
             break;
           case 37:
-            player1.vx = -100;
-            player1.vy = 0;
+            player1.vang = -100;
             break;
           case 38:
-            player1.angle = -100;
+            player1.am = -10;
             break;
           case 39:
-            player1.vx = +100;
-            player1.vy = 0;
+            player1.vang = +100;
             break;
           case 40:
-            player1.angle = 100;
+            player1.am= 10;
             break;
           case 65:
             player2.vx = -100;
@@ -142,10 +141,12 @@
             player2.vy = 0;
             break;
           case 83:
-            player2.angle = 100;
+            player2.vx = 0;
+            player2.vy = 100;
             break;
           case 87:
-            player2.angle = -100;
+            player2.vx = 0;
+            player2.vy = -100;
             break;
           default:
 
@@ -154,16 +155,16 @@
       addEventListener("keyup", function(e){
         switch (e.keyCode) {
           case 37:
-            player1.vx = 0;
+            player1.vang = 0;
             break;
           case 38:
-            player1.vy = 0;
+            player1.am = 0;
             break;
           case 39:
-          	player1.vx = 0;
+          	player1.vang = 0;
             break;
           case 40:
-            player1.vy = 0;
+            player1.am = 0;
             break;
           case 65:
             player2.vx = 0;
